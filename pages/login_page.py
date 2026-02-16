@@ -12,7 +12,9 @@ class LoginPage(BasePage):
 
     def login_to_site(self,url):
         self.load_url(url)
+
         self.set_text(self.username_input,"tomsmith")
+        print("ENTER NAME tomsmith")
         self.set_text(self.password_input,"SuperSecretPassword!")
         self.click(self.login_btn)
         self.wait_for_element_visible(self.success_msg)
