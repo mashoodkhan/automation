@@ -15,7 +15,7 @@ class BasePage:
 
     def wait_for_element_visible(self,locator):
         try:
-            locator = self.wait.until(
+            self.wait.until(
             EC.visibility_of_element_located(locator))
         except TimeoutException | ElementNotVisibleException as e:
             print(e)
@@ -30,13 +30,13 @@ class BasePage:
             return False
 
     def click(self,locator):
-        self.wait_for_element_visible(self, locator)
+        self.wait_for_element_visible(locator)
         self.wait.until(EC.element_to_be_clickable(locator)).click()
 
     def set_text(self,locator,value):
         self.wait_for_element_visible(locator)
-        self.driver.find_element(locator).clear()
-        self.driver.find_element(locator).send_keys(value)
+        self.driver.find_element(*locator).clear()
+        self.driver.find_element(*locator).send_keys(value)
 
     def get_text(self, locator):
         return self.wait.until(EC.visibility_of_element_located(locator)).text
