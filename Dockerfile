@@ -8,7 +8,7 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies (optional, remove if not needed)
+# Install system dependencies (only if needed)
 RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
@@ -20,8 +20,8 @@ COPY requirements.txt .
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt
 
-# Copy project files
+# Copy all project files (including data folder)
 COPY . .
 
-# Default command to run pytest
-CMD ["pytest", "-v"]
+# Default command to run tests
+CMD ["pytest", "-m","smoke"]
