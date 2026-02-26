@@ -16,9 +16,3 @@ def test_login_page():
     assert json_data == expected
     assert res.status_code == 200
 
-# @pytest.mark.api
-# def test_post_login():
-#     headers = {"Content-Type": "application/json"}
-#     with open(r"C:\Users\mashood.khan_hrsoft\PycharmProjects\automation\data\activities_response.json","r") as f:
-#         body = json.loads(f.read())
-#    #res =  requests.post("https://fakerestapi.azurewebsites.net/api/v1/Authors",headers=headers,json=body)
