@@ -8,13 +8,11 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies + Chrome
+# Install dependencies for Chrome + add Google repo
 RUN apt-get update && apt-get install -y \
     wget \
-    unzip \
-    curl \
     gnupg \
-    ca-certificates \
+    curl \
     fonts-liberation \
     libnss3 \
     libx11-xcb1 \
@@ -25,20 +23,26 @@ RUN apt-get update && apt-get install -y \
     libxtst6 \
     libxrandr2 \
     libasound2 \
-    xdg-utils \
     libatk1.0-0 \
     libatk-bridge2.0-0 \
     libpangocairo-1.0-0 \
     libxss1 \
+    libcups2 \
+    libgbm1 \
+    libgtk-3-0 \
+    xdg-utils \
     python3-venv \
     build-essential \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Google Chrome
-RUN wget -q -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    && apt-get install -y /tmp/chrome.deb \
-    && rm /tmp/chrome.deb
+# Add Google Chrome repo and install Chrome stable
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /usr/share/keyrings/google-chrome.gpg \
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" \
+       > /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies in virtual environment
 COPY requirements.txt .
