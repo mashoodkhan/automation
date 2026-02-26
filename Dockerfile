@@ -1,4 +1,4 @@
-# Use official Python image
+# Base Python image
 FROM python:3.12-slim
 
 # Set working directory
@@ -8,25 +8,46 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies
+# Install system dependencies + Chrome + fonts
 RUN apt-get update && apt-get install -y \
+    wget \
+    unzip \
+    curl \
+    gnupg \
+    ca-certificates \
+    fonts-liberation \
+    libnss3 \
+    libgconf-2-4 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxi6 \
+    libxtst6 \
+    libxrandr2 \
+    libasound2 \
+    xdg-utils \
     python3-venv \
     build-essential \
+    --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first (better caching)
-COPY requirements.txt .
+# Install Google Chrome
+RUN wget -q -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && apt-get install -y /tmp/chrome.deb \
+    && rm /tmp/chrome.deb
 
-# Create virtual environment and install dependencies
+# Copy requirements and install inside virtual environment
+COPY requirements.txt .
 RUN python -m venv /opt/venv \
     && /opt/venv/bin/pip install --upgrade pip \
     && /opt/venv/bin/pip install -r requirements.txt
 
-# Copy all project files (including data folder)
+# Copy project files (including data folder)
 COPY . .
 
-# Set PATH to use the venv by default
+# Add venv to PATH
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Default command to run tests inside the venv
-CMD ["pytest", "-m","smoke"]
+# Default command
+CMD ["pytest", "-v"]
